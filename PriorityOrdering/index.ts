@@ -1,10 +1,10 @@
 import * as React from 'react';
 import * as ReactDOM from 'react-dom';
 import type { IInputs, IOutputs } from './generated/ManifestTypes';
-import { PriorityOrderingComponent } from './PriorityOrderingComponent.js';
+import { Idataset, dataset } from './PriorityOrderingComponent';
 
 /// <reference types="powerapps-component-framework" />
-export class PriorityOrdering implements ComponentFramework.DatasetControl<IInputs> {
+export class PriorityOrdering implements ComponentFramework.ReactControl<IInputs, IOutputs> {
     private _container: HTMLDivElement;
 
     public init(context: ComponentFramework.Context<IInputs>, notifyOutputChanged: () => void, state: ComponentFramework.Dictionary, container: HTMLDivElement): void {
@@ -12,8 +12,8 @@ export class PriorityOrdering implements ComponentFramework.DatasetControl<IInpu
         this.renderReact(context);
     }
 
-    public updateView(context: ComponentFramework.Context<IInputs>): React.ReactElement | void {
-        this.renderReact(context);
+    public updateView(context: ComponentFramework.Context<IInputs>): React.ReactElement {
+        return this.renderReact(context);
     }
 
     public getOutputs(): IOutputs {
@@ -25,9 +25,13 @@ export class PriorityOrdering implements ComponentFramework.DatasetControl<IInpu
     }
 
     private renderReact(context: ComponentFramework.Context<IInputs>) {
-        ReactDOM.render(
-            React.createElement(PriorityOrderingComponent, { context }),
-            this._container
-        );
+        const dataset_items = context.parameters.items; // No need for unnecessary type assertion
+
+        const props: Idataset = {
+            name: 'priorityOrdering',
+            dataset: dataset_items
+        };
+
+        return React.createElement(dataset, { ...props, key: dataset_items?.sortedRecordIds?.join(",") });
     }
 }
